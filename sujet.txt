@@ -1,0 +1,80 @@
+
+
+Bienvenue au serveur de sujet de TP
+
+
+ 
+
+Présentation du Robot
+
+Ce robot à quatre roues, basé sur un Raspberry Pi 3 B, est équipé de plusieurs capteurs et actionneurs permettant de réaliser diverses tâches et interactions. Voici les équipements disponibles :
+
+    Capteurs infrarouges (IRS) : Utilisés pour détecter une ligne noire au sol. Les capteurs sont connectés aux GPIO suivants :
+        irs_R (GPIO21)
+        irs_C (GPIO20)
+        irs_L (GPIO16)
+    Capteur ultrasonique : Placé à l'avant pour détecter les obstacles. Connexions :
+        Trigger (GPIO7)
+        Echo (GPIO8)
+    Capteur DHT11 : Mesure la température et l'humidité (GPIO22).
+    Flash LED : Contrôlable via GPIO12.
+    Beeper : Produit un signal sonore (GPIO27).
+    Pont-H L298N : Contrôle les moteurs du robot. Connexions :
+        EN1 et EN2 (GPIO26)
+        Moteur droit avant (GPIO19), arrière (GPIO13)
+        Moteur gauche avant (GPIO6), arrière (GPIO5)
+    Écran LCD 16x2 : Connecté via I2C (adresse 0x27), permet d'afficher des messages et des informations.
+
+Tous les composants sont déjà installés sur le robot, et les branchements sont effectués. Les tâches consistent uniquement à programmer et tester les fonctionnalités demandées.
+Sujet : Mesure de température et humidité avec affichage dynamique
+
+Description : Votre robot doit se déplacer tout droit en mesurant la température et l'humidité à intervalles réguliers. Ces valeurs doivent être affichées sur l’écran LCD et envoyées à une API FastAPI.
+
+    Programmer le déplacement du robot tout droit. (5 points)
+    Lire les valeurs du capteur DHT11 à intervalles réguliers. (5 points)
+    Afficher ces valeurs sur l’écran LCD. (5 points)
+    Envoyer les valeurs du capteur à une route FastAPI(ou autre) sur votre PC pour etre enregistré sur une base de donnee a intervale régulier) . (5 points)
+
+Note : Contrôle de la vitesse des moteurs
+
+Pour contrôler la vitesse du robot, vous pouvez utiliser le mode PWM (Pulse Width Modulation) sur les GPIO qui commandent les moteurs. Les paramètres recommandés sont :
+
+    Fréquence : 50 Hz
+    Cycle de service (Duty Cycle) : Ne dépassez pas 50 % pour éviter d'endommager les moteurs.
+
+Le mode PWM permet de moduler la puissance fournie aux moteurs et ainsi d’ajuster leur vitesse de manière précise.
+Annexe : Utilisation de l’écran LCD via I2C
+
+Voici un exemple de code Python permettant de contrôler un écran LCD 16x2 connecté via I2C (adresse 0x27). Ce code affiche le texte ESSAT Gabes en clignotant sur l’écran.
+
+        
+from RPLCD.i2c import CharLCD
+import time
+
+lcd = CharLCD(i2c_expander='PCF8574', address=0x27, port=1, cols=16, rows=2, dotsize=8)
+lcd.clear()
+
+for i in range(10):
+    lcd.write_string('   **ESSAT**\n\r')
+    lcd.write_string("  ***Gabes***")
+    time.sleep(0.5)
+    lcd.clear()
+    time.sleep(0.5)
+        
+    
+
+Explications du code :
+
+    RPLCD.i2c : Une bibliothèque Python permettant de contrôler un écran LCD via I2C.
+    CharLCD : Classe utilisée pour initialiser l’écran LCD avec :
+        i2c_expander='PCF8574' : Spécifie le type d’expandeur I2C utilisé.
+        address=0x27 : Adresse I2C de l’écran LCD.
+        port=1 : Numéro du port I2C sur le Raspberry Pi.
+        cols=16, rows=2 : Dimensions de l’écran.
+        dotsize=8 : Taille des pixels (typique pour les écrans LCD 16x2).
+    lcd.clear() : Efface l’écran.
+    lcd.write_string() : Affiche une chaîne de caractères sur l’écran.
+    time.sleep() : Introduit une pause entre les actions pour créer un effet visuel.
+
+ 
+
